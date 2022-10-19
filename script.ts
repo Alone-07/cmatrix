@@ -1,5 +1,5 @@
 const canvas = document.querySelector('#canvas') as HTMLCanvasElement
-const ctx:CanvasRenderingContext2D = canvas?.getContext('2d')
+const ctx:CanvasRenderingContext2D = canvas?.getContext('2d')!
 
 canvas.width = window.innerWidth
 canvas.height = window.innerHeight
@@ -32,14 +32,21 @@ class Effects {
     columns: number = this.canvasWidth / fontsize
     symbols: any[]= []
     constructor( public canvasWidth: number,  public canvasHeight: number) {
-        this.#start()
+        this.start()
     }
 
     // here '#' means private
-    #start():void{
+    start():void{
         for(let i:number = 0; i < this.columns; i++) {
             this.symbols[i] = new Characters(i, 0, this.canvasHeight);
         }
+    }
+    resize(width:number, height:number) {
+        this.canvasWidth = width
+        this.canvasHeight = height
+        this.columns = this.canvasWidth / fontsize
+        this.symbols = []
+        this.start()
     }
 }
 
@@ -56,3 +63,12 @@ function animateLoop() {
 }
 animateLoop()
 setInterval(animateLoop, 1000/fps)
+
+window.addEventListener('resize', _ => {
+    canvas.width = window.innerWidth
+    canvas.height = window.innerHeight
+
+    eff.resize(canvas.width, canvas.height)
+})
+
+
